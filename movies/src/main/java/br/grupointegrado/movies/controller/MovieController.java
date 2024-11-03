@@ -46,6 +46,7 @@ public class MovieController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
+
         Movie movie = this.repository.findById(id)
                 .orElseThrow(() ->
                         new IllegalArgumentException("Filme não encontrado"));
@@ -53,6 +54,23 @@ public class MovieController {
         this.repository.delete(movie);
         return ResponseEntity.noContent().build();
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Movie> update(@PathVariable Integer id, @RequestBody MovieRequestDTO dto) {
+        if (dto.nome().isEmpty()) {
+            return ResponseEntity.status(428).build();
+        }
+
+        Movie movie = this.repository.findById(id)
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Filme não encontrado"));
+
+        movie.setNome(dto.nome());
+
+        this.repository.save(movie);
+        return ResponseEntity.ok(movie);
+    }
+
 
 
 
